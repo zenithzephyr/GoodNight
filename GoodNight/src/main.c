@@ -50,16 +50,52 @@ static void configure_console(void)
 	stdio_serial_init(CONF_UART, &uart_serial_options);
 }
 
-void ADC_IrqHandler(void)
+static void configure_wifi(void)
+{
+	usart_serial_options_t usart_options = {
+		.baudrate = CONF_WIFI_UART_BAUDRATE,
+		#ifdef CONF_UART_CHAR_LENGTH
+		.charlength = CONF_UART_CHAR_LENGTH,
+		#endif
+		.paritytype = CONF_WIFI_UART_PARITY,
+		#ifdef CONF_UART_STOP_BITS
+		.stopbits = CONF_UART_STOP_BITS,
+		#endif
+	};
+	/* Configure console UART. */
+	usart_serial_init((usart_if)CONF_WIFI_UART, &usart_options);
+	
+	uart_enable_interrupt(UART1,UART_IER_RXRDY);
+	NVIC_EnableIRQ(UART1_IRQn);
+}
+
+void UART1_Handler(void)
+{
+	uint8_t rx_data;
+	uint32_t status = uart_get_status(UART1);
+	
+	if(status & UART_SR_RXRDY){
+		//read
+		uart_read(UART1, &rx_data);
+		
+		//reply back the same
+		while (!(UART1->UART_SR & UART_SR_TXRDY));
+		uart_write(UART1, rx_data); //send data
+	}
+}
+
+void ADC_Handler(void)
 {
 	// Check the ADC conversion status
 	if ((adc_get_status(ADC) & ADC_ISR_DRDY) == ADC_ISR_DRDY)
 	{
 		// Get latest digital data value from ADC and can be used by application
 		uint32_t result = adc_get_latest_value(ADC);
+		printf("ADC result = %x\r\n", (unsigned int)result);
 	}
 }
-void adc_setup(void)
+
+static void adc_setup(void)
 {
 	adc_init(ADC, sysclk_get_main_hz(), ADC_CLOCK, 8);
 	adc_configure_timing(ADC, 0, ADC_SETTLING_TIME_3, 1);
@@ -86,15 +122,22 @@ int main (void)
 
 	configure_console();
 
+	printf("GoodNight Service Started.\r\n");
+
+	configure_wifi();
+
 	adc_setup();	adc_start(ADC);
 	gpio_set_pin_low(LED0_GPIO);
 	gpio_set_pin_high(LED1_GPIO);
 
-	printf("STARTED\n");
-
+	
 	while(1) {
 		gpio_toggle_pin(LED0_GPIO);
+		printf("LED0 Toggle\r\n");
+		usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"LED0 Toggle\r\n", 13);
 		gpio_toggle_pin(LED1_GPIO);
+		printf("LED1 Toggle\r\n");
+		usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"LED1 Toggle\r\n", 13);
 		delay_s(1);
 	}
 }
