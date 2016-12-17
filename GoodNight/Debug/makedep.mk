@@ -12,6 +12,10 @@ src\ASF\sam\boards\sam4s_xplained\init.c
 
 src\ASF\sam\boards\sam4s_xplained\led.c
 
+src\ASF\sam\drivers\adc\adc.c
+
+src\ASF\sam\drivers\adc\adc_sam3u.c
+
 src\ASF\sam\drivers\pio\pio.c
 
 src\ASF\sam\drivers\pio\pio_handler.c

@@ -47,11 +47,8 @@
 #ifndef CONF_BOARD_H_INCLUDED
 #define CONF_BOARD_H_INCLUDED
 
-/* Configure UART pins */
-#define CONF_BOARD_UART_CONSOLE
-
 /* The SAM4S Xplain has one push button only */
-#define BOARD_NO_PUSHBUTTON_2
+//#define BOARD_NO_PUSHBUTTON_2
 
 /* Configure SPI pins */
 #define CONF_BOARD_SPI
@@ -79,6 +76,6 @@
 //#define CONF_BOARD_USART_SCK
 
 /* Configure SRAM pin */
-#define CONF_BOARD_SRAM
+//#define CONF_BOARD_SRAM
 
 #endif /* CONF_BOARD_H_INCLUDED */

@@ -68,15 +68,31 @@ void board_init(void)
 	/* Configure LED pins */
 	gpio_configure_pin(LED0_GPIO, LED0_FLAGS);
 	gpio_configure_pin(LED1_GPIO, LED1_FLAGS);
-	
-	/* Configure Push Button pins */
-	gpio_configure_pin(GPIO_PUSH_BUTTON_1, GPIO_PUSH_BUTTON_1_FLAGS);
 
-#ifdef CONF_BOARD_UART_CONSOLE
+	/* Configure wifi pins */
+	gpio_configure_group(PINS_UART1_PIO, PINS_UART1, PINS_UART1_FLAGS); //wifi
+	gpio_configure_pin(WIFI_WAKE_GPIO, WIFI_WAKE_FLAGS);
+	gpio_configure_pin(WIFI_EN_GPIO, WIFI_EN_FLAGS);
+	gpio_configure_pin(WIFI_WAKE_GPIO, WIFI_WAKE_FLAGS);
+
+	/* Configure UHF pins */
+	gpio_configure_pin(UHF_RX_GPIO, UHF_RX_FLAGS);
+	gpio_configure_pin(UHF_BR0_GPIO, UHF_BR0_FLAGS);
+	gpio_configure_pin(UHF_BR1_GPIO, UHF_BR1_FLAGS);
+	gpio_configure_pin(UHF_ASK_GPIO, UHF_ASK_FLAGS);
+	gpio_configure_pin(UHF_DO_GPIO, UHF_DO_FLAGS);
+	gpio_configure_pin(UHF_ENA_GPIO, UHF_ENA_FLAGS);
+
+	/* Configure ultrasonic wate pins */
+	gpio_configure_pin(UWAVE_TRIG_GPIO, UWAVE_TRIG_FLAGS);
+	gpio_configure_pin(UWAVE_ECHO_GPIO, UWAVE_ECHO_FLAGS);
+
+	/* Configure door pins */
+	gpio_configure_pin(DOOR_GPIO, DOOR_FLAGS);
+
 	/* Configure UART pins */
-	gpio_configure_group(PINS_UART0_PIO, PINS_UART0, PINS_UART0_FLAGS);
-#endif
-
+	gpio_configure_group(PINS_UART0_PIO, PINS_UART0, PINS_UART0_FLAGS); //debug
+	
 #ifdef CONF_BOARD_TWI0
 	gpio_configure_pin(TWI0_DATA_GPIO, TWI0_DATA_FLAGS);
 	gpio_configure_pin(TWI0_CLK_GPIO, TWI0_CLK_FLAGS);

@@ -50,8 +50,6 @@
 #include "compiler.h"
 #include "system_sam4s.h"
 
-
-//#define BOARD_REV_A
 #define BOARD_REV_B
 
 /*----------------------------------------------------------------------------*/
@@ -86,7 +84,7 @@
  */
 
 /** Name of the board */
-#define BOARD_NAME "SAM4S-XPLAINED"
+#define BOARD_NAME "SAM4S-GOODNIGHT"
 /** Board definition */
 #define sam4sxplained
 /** Family definition (already defined) */
@@ -192,12 +190,7 @@
 #define PIN_EBI_ADDR_BUS_FLAG2 PIO_PERIPH_C | PIO_PULLUP
 
 /** LED #0 pin definition. */
-#ifdef BOARD_REV_A
-#define LED_0_NAME     "LED D9"
-#endif
-#ifdef BOARD_REV_B
 #define LED_0_NAME     "LED1"
-#endif
 #define PIN_LED_0      {PIO_PA15, PIOA, ID_PIOA, PIO_OUTPUT_1, PIO_DEFAULT}
 #define PIN_LED_0_MASK PIO_PA15
 #define PIN_LED_0_PIO  PIOA
@@ -210,12 +203,7 @@
 #define LED0_ACTIVE_LEVEL 0
 
 /** LED #1 pin definition. */
-#ifdef BOARD_REV_A
-#define LED_1_NAME     "LED D10"
-#endif
-#ifdef BOARD_REV_B
 #define LED_1_NAME     "LED2"
-#endif
 #define PIN_LED_1      {PIO_PA16, PIOA, ID_PIOA, PIO_OUTPUT_1, PIO_DEFAULT}
 #define PIN_LED_1_MASK PIO_PA16
 #define PIN_LED_1_PIO  PIOA
@@ -229,14 +217,48 @@
 
 #define BOARD_NUM_OF_LED 2
 
-/** Push button #0 definition. Attributes = pull-up + debounce + interrupt on rising edge. */
-#ifdef BOARD_REV_A
-#define PUSHBUTTON_1_NAME    "SW1"
-#endif
+/** Wifi Control pin definition. */
+#define WIFI_WAKE_GPIO	(PIO_PA26_IDX)
+#define WIFI_WAKE_FLAGS	(PIO_OUTPUT_1 | PIO_DEFAULT)
 
-#ifdef BOARD_REV_B
+#define WIFI_EN_GPIO	(PIO_PA27_IDX)
+#define WIFI_EN_FLAGS	(PIO_OUTPUT_0 | PIO_DEFAULT)
+
+#define WIFI_RESET_GPIO		(PIO_PA28_IDX)
+#define WIFI_RESET_FLAGS	(PIO_OUTPUT_1| PIO_DEFAULT)
+
+/** UHF pin definition */
+#define UHF_RX_GPIO		(PIO_PA0_IDX)
+#define UHF_RX_FLAGS	(PIO_OUTPUT_1| PIO_DEFAULT)
+
+#define UHF_BR0_GPIO	(PIO_PA1_IDX)
+#define UHF_BR0_FLAGS	(PIO_OUTPUT_1| PIO_DEFAULT)
+
+#define UHF_BR1_GPIO	(PIO_PA2_IDX)
+#define UHF_BR1_FLAGS	(PIO_OUTPUT_1| PIO_DEFAULT)
+
+#define UHF_ASK_GPIO	(PIO_PA3_IDX)
+#define UHF_ASK_FLAGS	(PIO_OUTPUT_1| PIO_DEFAULT)
+
+#define UHF_DO_GPIO		(PIO_PA4_IDX)
+#define UHF_DO_FLAGS	(PIO_INPUT| PIO_DEFAULT)
+
+#define UHF_ENA_GPIO	(PIO_PA5_IDX)
+#define UHF_ENA_FLAGS	(PIO_OUTPUT_1| PIO_DEFAULT)
+
+/** ultrasonic wave pin definition */
+#define UWAVE_TRIG_GPIO		(PIO_PA29_IDX)
+#define UWAVE_TRIG_FLAGS	(PIO_OUTPUT_0| PIO_DEFAULT)
+
+#define UWAVE_ECHO_GPIO		(PIO_PA30_IDX)
+#define UWAVE_ECHO_FLAGS	(PIO_INPUT| PIO_DEFAULT)
+
+/** door sensor pin definition */
+#define DOOR_GPIO		(PIO_PA31_IDX)
+#define DOOR_FLAGS		(PIO_INPUT| PIO_DEFAULT)
+
+/** Push button #0 definition. Attributes = pull-up + debounce + interrupt on rising edge. */
 #define PUSHBUTTON_1_NAME    "BP2"
-#endif
 #define GPIO_PUSH_BUTTON_1       (PIO_PA5_IDX)
 #define GPIO_PUSH_BUTTON_1_FLAGS (PIO_INPUT | PIO_PULLUP | PIO_DEBOUNCE | PIO_IT_RISE_EDGE)
 
