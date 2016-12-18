@@ -8,6 +8,8 @@ src\ASF\common\services\clock\sam4s\sysclk.c
 
 src\ASF\common\services\serial\usart_serial.c
 
+src\ASF\common\services\spi\sam_spi\spi_master.c
+
 src\ASF\common\utils\interrupt\interrupt_sam_nvic.c
 
 src\ASF\common\utils\stdio\read.c
@@ -31,6 +33,8 @@ src\ASF\sam\drivers\pmc\pmc.c
 src\ASF\sam\drivers\pmc\sleep.c
 
 src\ASF\sam\drivers\rtt\rtt.c
+
+src\ASF\sam\drivers\spi\spi.c
 
 src\ASF\sam\drivers\uart\uart.c
 

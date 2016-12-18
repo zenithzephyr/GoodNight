@@ -90,7 +90,7 @@
 /** Family definition (already defined) */
 #define sam4s
 /** Core definition */
-#define cortexm3
+#define cortexm4
 
 /*----------------------------------------------------------------------------*/
 /** Pins ADC */
