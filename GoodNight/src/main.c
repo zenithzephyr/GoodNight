@@ -32,6 +32,7 @@
 
 #define ADC_CLOCK 6000000
 
+/** configures */
 static void configure_console(void)
 {
 	const usart_serial_options_t uart_serial_options = {
@@ -64,34 +65,105 @@ static void configure_wifi(void)
 	};
 	/* Configure console UART. */
 	usart_serial_init((usart_if)CONF_WIFI_UART, &usart_options);
-	
+
 	uart_enable_interrupt(UART1,UART_IER_RXRDY);
 	NVIC_EnableIRQ(UART1_IRQn);
+}
+
+static void configure_adc(void)
+{
+	pmc_enable_periph_clk(ID_ADC);
+	adc_init(ADC, sysclk_get_cpu_hz(), ADC_CLOCK, ADC_STARTUP_TIME_15);
+	adc_configure_timing(ADC, 1, ADC_SETTLING_TIME_3, 1);
+	adc_configure_trigger(ADC, ADC_TRIG_SW, 0);
+
+	adc_check(ADC, sysclk_get_cpu_hz());
+	//adc_set_resolution(ADC, ADC_MR_LOWRES_BITS_12);
+
+	adc_enable_channel(ADC, ADC_CHANNEL_0);
+	adc_enable_channel(ADC, ADC_CHANNEL_1);
+	adc_enable_channel(ADC, ADC_CHANNEL_2);
+	adc_enable_channel(ADC, ADC_CHANNEL_3);
+	adc_enable_channel(ADC, ADC_CHANNEL_4);
+	adc_enable_channel(ADC, ADC_CHANNEL_5);
+	adc_enable_channel(ADC, ADC_CHANNEL_8);
+	adc_enable_channel(ADC, ADC_CHANNEL_9); //ABS
+
+	adc_enable_interrupt(ADC, ADC_ISR_EOC0|ADC_ISR_EOC1|ADC_ISR_EOC2|ADC_ISR_EOC3|ADC_ISR_EOC4|ADC_ISR_EOC5|ADC_ISR_EOC8|ADC_ISR_EOC9);
+	NVIC_EnableIRQ(ADC_IRQn);
+}
+
+/** Interrupt Handlers */
+void ADC_Handler(void)
+{
+	// Check the ADC conversion status
+	uint32_t status;
+	uint32_t result;
+
+	status = adc_get_status(ADC);
+
+	if(status & (1 << ADC_CHANNEL_0)) {
+		result = adc_get_channel_value(ADC, ADC_CHANNEL_0);
+		printf("ADC0 result = %x\t", (unsigned int)result);
+	}
+
+	if(status & (1 << ADC_CHANNEL_1)) {
+		result = adc_get_channel_value(ADC, ADC_CHANNEL_1);
+		printf("ADC1 result = %x\t", (unsigned int)result);
+	}
+	if(status & (1 << ADC_CHANNEL_2)) {
+		result = adc_get_channel_value(ADC, ADC_CHANNEL_2);
+		printf("ADC2 result = %x\t", (unsigned int)result);
+	}
+	if(status & (1 << ADC_CHANNEL_3)) {
+		result = adc_get_channel_value(ADC, ADC_CHANNEL_3);
+		printf("ADC3 result = %x\t", (unsigned int)result);
+	}
+	if(status & (1 << ADC_CHANNEL_4)) {
+		result = adc_get_channel_value(ADC, ADC_CHANNEL_4);
+		printf("ADC4 result = %x\t", (unsigned int)result);
+	}
+	if(status & (1 << ADC_CHANNEL_5)) {
+		result = adc_get_channel_value(ADC, ADC_CHANNEL_5);
+		printf("ADC5 result = %x\t", (unsigned int)result);
+	}
+	if(status & (1 << ADC_CHANNEL_8)) {
+		result = adc_get_channel_value(ADC, ADC_CHANNEL_8);
+		printf("ADC8 result = %x\t", (unsigned int)result);
+	}
+	if(status & (1 << ADC_CHANNEL_9)) {
+		result = adc_get_channel_value(ADC, ADC_CHANNEL_9);
+		printf("ADC9 result = %x\t", (unsigned int)result);
+	}
+
+	printf("\r\n");
+
+}
+
+void SysTick_Handler(void)
+{
+	//TODO: FIXME
+	//uint32_t status;
+	//status = adc_get_status(ADC);
+	//printf("ADC Status(%x)\r\n", status);
+	//if(adc_get_status(ADC) & (1 << ADC_CHANNEL_0)) {
+	adc_start(ADC);
+	//	printf("Start ADC\r\n");
+	//}
 }
 
 void UART1_Handler(void)
 {
 	uint8_t rx_data;
 	uint32_t status = uart_get_status(UART1);
-	
+
 	if(status & UART_SR_RXRDY){
 		//read
 		uart_read(UART1, &rx_data);
-		
+
 		//reply back the same
 		while (!(UART1->UART_SR & UART_SR_TXRDY));
 		uart_write(UART1, rx_data); //send data
-	}
-}
-
-void ADC_Handler(void)
-{
-	// Check the ADC conversion status
-	if ((adc_get_status(ADC) & ADC_ISR_DRDY) == ADC_ISR_DRDY)
-	{
-		// Get latest digital data value from ADC and can be used by application
-		uint32_t result = adc_get_latest_value(ADC);
-		printf("ADC result = %x\r\n", (unsigned int)result);
 	}
 }
 
@@ -109,23 +181,7 @@ static void UHF_DI_Handler(const uint32_t id, const uint32_t index)
 	}
 }
 
-static void adc_setup(void)
-{
-	adc_init(ADC, sysclk_get_main_hz(), ADC_CLOCK, 8);
-	adc_configure_timing(ADC, 0, ADC_SETTLING_TIME_3, 1);
-	adc_set_resolution(ADC, ADC_MR_LOWRES_BITS_12);
-	adc_enable_channel(ADC, ADC_CHANNEL_0);
-	adc_enable_channel(ADC, ADC_CHANNEL_1);
-	adc_enable_channel(ADC, ADC_CHANNEL_2);
-	adc_enable_channel(ADC, ADC_CHANNEL_3);
-	adc_enable_channel(ADC, ADC_CHANNEL_4);
-	adc_enable_channel(ADC, ADC_CHANNEL_5);
-	adc_enable_channel(ADC, ADC_CHANNEL_8);
-	adc_enable_channel(ADC, ADC_CHANNEL_9); //ABS
-
-	adc_enable_interrupt(ADC, ADC_IER_DRDY);
-	adc_configure_trigger(ADC, ADC_TRIG_SW, 0);
-}
+/** main */
 int main (void)
 {
 	sysclk_init();
@@ -134,25 +190,31 @@ int main (void)
 
 	delay_init(sysclk_get_cpu_hz());
 
-	rtt_init(RTT, 1);
-
 	configure_console();
-
 	printf("GoodNight Service Started.\r\n");
 
-	configure_wifi();
+	if (SysTick_Config(sysclk_get_cpu_hz() / 10)) { //1ms
+		printf("-F- Systick configuration error\r\n");
+		while(1) {
+		}
+	}
+	printf("SysTick Configured.\r\n");
 
-	adc_setup();	adc_start(ADC);
-	gpio_set_pin_low(LED0_GPIO);
-	gpio_set_pin_high(LED1_GPIO);
+	rtt_init(RTT, 1);
+	printf("RTT Initialized.\r\n");
+
+	configure_wifi();
+	printf("Wifi UART Configured.\r\n");
+
+	configure_adc();	printf("ADC Configured.\r\n");	//LED Reset	gpio_set_pin_low(LED0_GPIO);	gpio_set_pin_high(LED1_GPIO);	// ADC Start	adc_start(ADC);
 
 	//UHF DI
 	gpio_configure_pin(UHF_DO_GPIO, UHF_DO_FLAGS | PIO_PULLUP);
 	pio_handler_set(PIOA, ID_PIOA, (1 << UHF_DO_GPIO), PIO_IT_EDGE, UHF_DI_Handler);
 	pio_enable_interrupt(PIOA, (1 << UHF_DO_GPIO));
-	NVIC_EnableIRQ(PIOA_IRQn);
 
-	
+	uint32_t rtt_value; //used in UHF, UWAVE (30uS resolution)
+
 	while(1) {
 		gpio_toggle_pin(LED0_GPIO);
 		printf("LED0 Toggle\r\n");
