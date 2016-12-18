@@ -95,6 +95,20 @@ void ADC_Handler(void)
 	}
 }
 
+void UHF_DI_Handler(const uint32_t id, const uint32_t index)
+{
+	uint32_t status;
+	status = pio_get_interrupt_status(PIOA);
+	printf("UHF DI Interrupt\r\n");
+
+	if ((id == ID_PIOA) && (index == (1 << UHF_DO_GPIO))){
+		//if (pio_get(PIOA, PIO_TYPE_PIO_INPUT, (1 << UHF_DO_GPIO)))
+		//pio_clear(PIOA, PIO_PA23);
+		//else
+		//pio_set(PIOA, PIO_PA23);
+	}
+}
+
 static void adc_setup(void)
 {
 	adc_init(ADC, sysclk_get_main_hz(), ADC_CLOCK, 8);
@@ -130,6 +144,11 @@ int main (void)
 	gpio_set_pin_low(LED0_GPIO);
 	gpio_set_pin_high(LED1_GPIO);
 
+	//UHF DI
+	gpio_configure_pin(UHF_DO_GPIO, UHF_DO_FLAGS | PIO_PULLUP);
+	pio_handler_set(PIOA, ID_PIOA, (1 << UHF_DO_GPIO), PIO_IT_EDGE, UHF_DI_Handler);
+	pio_enable_interrupt(PIOA, (1 << UHF_DO_GPIO));
+	NVIC_EnableIRQ(PIOA_IRQn);
 	
 	while(1) {
 		gpio_toggle_pin(LED0_GPIO);
