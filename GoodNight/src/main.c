@@ -95,11 +95,11 @@ void ADC_Handler(void)
 	}
 }
 
-void UHF_DI_Handler(const uint32_t id, const uint32_t index)
+static void UHF_DI_Handler(const uint32_t id, const uint32_t index)
 {
 	uint32_t status;
 	status = pio_get_interrupt_status(PIOA);
-	printf("UHF DI Interrupt\r\n");
+	printf("UHF DI Interrupt (%lu)\r\n", status);
 
 	if ((id == ID_PIOA) && (index == (1 << UHF_DO_GPIO))){
 		//if (pio_get(PIOA, PIO_TYPE_PIO_INPUT, (1 << UHF_DO_GPIO)))
@@ -134,6 +134,8 @@ int main (void)
 
 	delay_init(sysclk_get_cpu_hz());
 
+	rtt_init(RTT, 1);
+
 	configure_console();
 
 	printf("GoodNight Service Started.\r\n");
@@ -149,6 +151,8 @@ int main (void)
 	pio_handler_set(PIOA, ID_PIOA, (1 << UHF_DO_GPIO), PIO_IT_EDGE, UHF_DI_Handler);
 	pio_enable_interrupt(PIOA, (1 << UHF_DO_GPIO));
 	NVIC_EnableIRQ(PIOA_IRQn);
+
+	uint32_t rtt_value;
 	
 	while(1) {
 		gpio_toggle_pin(LED0_GPIO);
@@ -157,6 +161,8 @@ int main (void)
 		gpio_toggle_pin(LED1_GPIO);
 		printf("LED1 Toggle\r\n");
 		usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"LED1 Toggle\r\n", 13);
+		rtt_value = rtt_read_timer_value(RTT);
+		printf("RTT = %lu\r\n", rtt_value);
 		delay_s(1);
 	}
 }
