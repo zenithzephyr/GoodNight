@@ -152,7 +152,6 @@ int main (void)
 	pio_enable_interrupt(PIOA, (1 << UHF_DO_GPIO));
 	NVIC_EnableIRQ(PIOA_IRQn);
 
-	uint32_t rtt_value;
 	
 	while(1) {
 		gpio_toggle_pin(LED0_GPIO);
