@@ -193,7 +193,7 @@ int main (void)
 	configure_console();
 	printf("GoodNight Service Started.\r\n");
 
-	if (SysTick_Config(sysclk_get_cpu_hz() / 10)) { //1ms
+	if (SysTick_Config(sysclk_get_cpu_hz() / 10)) { //100ms
 		printf("-F- Systick configuration error\r\n");
 		while(1) {
 		}
