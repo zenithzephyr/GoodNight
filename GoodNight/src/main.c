@@ -213,6 +213,45 @@ int main (void)
 	pio_handler_set(PIOA, ID_PIOA, (1 << UHF_DO_GPIO), PIO_IT_EDGE, UHF_DI_Handler);
 	pio_enable_interrupt(PIOA, (1 << UHF_DO_GPIO));
 
+	//SPI
+	struct spi_device spi_device_conf = {
+		.id = 1
+	};
+	//Init SPI module as master
+	 spi_master_init(SPI);
+	 //Setup parameters for the slave device
+	spi_master_setup_device(SPI, &spi_device_conf, SPI_MODE_0, 100000, 0);
+	//Allow the module to transfer data
+	spi_enable(SPI);
+	
+	//Buffer to send data to SPI slave
+	uint8_t txdata[4]={0x90, 0x00, 0x00, 0x00};
+	//Buffer to receive data from SPI slave
+	uint8_t rxdata[128] = {0, };
+
+	// Select the slave device with chip select
+	spi_select_device(SPI,&spi_device_conf);
+	// Send the data to slave
+	spi_write_packet(SPI, txdata, 4);
+	// Read data from slave
+	spi_read_packet(SPI, rxdata,2);
+	
+	printf("Read Device ID : 0x%X 0x%X\r\n", rxdata[0], rxdata[1]);
+
+	//Read Data
+	txdata[0] = 0x03;
+	
+	spi_write_packet(SPI, txdata, 4);
+	// Read data from slave
+	spi_read_packet(SPI, rxdata,128);
+	int i;
+	for(i=0;i<128;i++)
+		printf("%X ",rxdata[i]);
+	printf("\r\n");
+	
+	// Deselect the slave
+	spi_deselect_device(SPI,&spi_device_conf);
+
 	uint32_t rtt_value; //used in UHF, UWAVE (30uS resolution)
 
 	while(1) {
