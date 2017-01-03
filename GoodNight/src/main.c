@@ -147,7 +147,7 @@ void SysTick_Handler(void)
 	//status = adc_get_status(ADC);
 	//printf("ADC Status(%x)\r\n", status);
 	//if(adc_get_status(ADC) & (1 << ADC_CHANNEL_0)) {
-	adc_start(ADC);
+	//adc_start(ADC);
 	//	printf("Start ADC\r\n");
 	//}
 }
@@ -160,10 +160,14 @@ void UART1_Handler(void)
 	if(status & UART_SR_RXRDY){
 		//read
 		uart_read(UART1, &rx_data);
-
 		//reply back the same
+#if 0
 		while (!(UART1->UART_SR & UART_SR_TXRDY));
 		uart_write(UART1, rx_data); //send data
+#else
+		while (!(UART0->UART_SR & UART_SR_TXRDY));
+		uart_write(UART0, rx_data); //send data
+#endif	
 	}
 }
 
@@ -220,7 +224,7 @@ int main (void)
 	//Init SPI module as master
 	 spi_master_init(SPI);
 	 //Setup parameters for the slave device
-	spi_master_setup_device(SPI, &spi_device_conf, SPI_MODE_0, 100000, 0);
+	spi_master_setup_device(SPI, &spi_device_conf, SPI_MODE_0, 1000, 0);
 	//Allow the module to transfer data
 	spi_enable(SPI);
 	
@@ -252,6 +256,20 @@ int main (void)
 	// Deselect the slave
 	spi_deselect_device(SPI,&spi_device_conf);
 
+	//Start AT Command
+	uint8_t atstart[13] = {0xA5, 0x01, 0xF2, 0x00, 0x00, 0x0C, 0x00, 0x0C, 0x00, 0x61, 0x2F, 0x52, 0xEF};
+	usart_serial_write_packet((usart_if)CONF_WIFI_UART,atstart, 13);
+	printf("Send ATCommand Start\r\n");
+	#if 1
+	delay_ms(1000);
+	usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"AT\r\n", 4);
+	delay_ms(1000);
+	usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"AT+LIST\r\n", 9);
+	delay_ms(1000);
+	usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"AT+CHIPID\r\n",11);
+	delay_ms(1000);
+	usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"AT+AP=WINC1500,0,1\r\n",20);
+	#endif
 	uint32_t rtt_value; //used in UHF, UWAVE (30uS resolution)
 
 	while(1) {
@@ -263,6 +281,32 @@ int main (void)
 		usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"LED1 Toggle\r\n", 13);
 		rtt_value = rtt_read_timer_value(RTT);
 		printf("RTT = %lu\r\n", rtt_value);
+
+#if 0
+	// Select the slave device with chip select
+	spi_select_device(SPI,&spi_device_conf);
+	// Send the data to slave
+	spi_write_packet(SPI, txdata, 4);
+	// Read data from slave
+	spi_read_packet(SPI, rxdata,2);
+	
+	printf("Read Device ID : 0x%X 0x%X\r\n", rxdata[0], rxdata[1]);
+
+	//Read Data
+	txdata[0] = 0x03;
+	
+	spi_write_packet(SPI, txdata, 4);
+	// Read data from slave
+	spi_read_packet(SPI, rxdata,128);
+	int i;
+	for(i=0;i<128;i++)
+	printf("%X ",rxdata[i]);
+	printf("\r\n");
+	
+	// Deselect the slave
+	spi_deselect_device(SPI,&spi_device_conf);
+#endif
 		delay_s(1);
+
 	}
 }
