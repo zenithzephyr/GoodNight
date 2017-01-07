@@ -54,7 +54,7 @@
 
 void board_init(void)
 {
-#ifndef CONF_BOARD_KEEP_WATCHDOG_AT_INIT 
+#ifndef CONF_BOARD_KEEP_WATCHDOG_AT_INIT
 	/* Disable the watchdog */
 	WDT->WDT_MR = WDT_MR_WDDIS;
 #endif
@@ -64,6 +64,21 @@ void board_init(void)
 	 * Here IOPORT must be initialized for others to use before setting up IO.
 	 */
 	ioport_init();
+
+	/* Configure LCD pins */
+	gpio_configure_pin(LCD_RD_GPIO, LCD_RD_FLAGS);
+	gpio_configure_pin(LCD_WR_GPIO, LCD_WR_FLAGS);
+	gpio_configure_pin(LCD_RS_GPIO, LCD_RS_FLAGS);
+	gpio_configure_pin(LCD_CS_GPIO, LCD_CS_FLAGS);
+	gpio_configure_pin(LCD_DB17_GPIO, LCD_DB17_FLAGS);
+	gpio_configure_pin(LCD_DB16_GPIO, LCD_DB16_FLAGS);
+	gpio_configure_pin(LCD_DB15_GPIO, LCD_DB15_FLAGS);
+	gpio_configure_pin(LCD_DB14_GPIO, LCD_DB14_FLAGS);
+	gpio_configure_pin(LCD_DB13_GPIO, LCD_DB13_FLAGS);
+	gpio_configure_pin(LCD_DB12_GPIO, LCD_DB12_FLAGS);
+	gpio_configure_pin(LCD_DB11_GPIO, LCD_DB11_FLAGS);
+	gpio_configure_pin(LCD_DB10_GPIO, LCD_DB10_FLAGS);
+	gpio_configure_pin(LCD_BLCTL_GPIO, LCD_BLCTL_FLAGS);
 
 	/* Configure LED pins */
 	gpio_configure_pin(LED0_GPIO, LED0_FLAGS);
@@ -92,7 +107,7 @@ void board_init(void)
 
 	/* Configure UART pins */
 	gpio_configure_group(PINS_UART0_PIO, PINS_UART0, PINS_UART0_FLAGS); //debug
-	
+
 #ifdef CONF_BOARD_TWI0
 	gpio_configure_pin(TWI0_DATA_GPIO, TWI0_DATA_FLAGS);
 	gpio_configure_pin(TWI0_CLK_GPIO, TWI0_CLK_FLAGS);
@@ -108,14 +123,14 @@ void board_init(void)
 	gpio_configure_pin(SPI_MISO_GPIO, SPI_MISO_FLAGS);
 	gpio_configure_pin(SPI_MOSI_GPIO, SPI_MOSI_FLAGS);
 	gpio_configure_pin(SPI_SPCK_GPIO, SPI_SPCK_FLAGS);
-	
+
 	/**
 	 * For NPCS 1, 2, and 3, different PINs can be used to access the same NPCS line.
-	 * Depending on the application requirements, the default PIN may not be available. 
-	 * Hence a different PIN should be selected using the CONF_BOARD_SPI_NPCS_GPIO and 
+	 * Depending on the application requirements, the default PIN may not be available.
+	 * Hence a different PIN should be selected using the CONF_BOARD_SPI_NPCS_GPIO and
 	 * CONF_BOARD_SPI_NPCS_FLAGS macros.
 	 */
-	
+
 	#ifdef CONF_BOARD_SPI_NPCS0
 		gpio_configure_pin(SPI_NPCS0_GPIO, SPI_NPCS0_FLAGS);
 	#endif

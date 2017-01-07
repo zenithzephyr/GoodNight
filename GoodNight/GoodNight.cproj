@@ -235,8 +235,8 @@
         <board id="board.sam4s_xplained" value="Add" config="" content-id="Atmel.ASF" />
       </framework-data>
     </AsfFrameworkConfig>
-    <avrtool>com.atmel.avrdbg.tool.samice</avrtool>
-    <avrtoolserialnumber>123456</avrtoolserialnumber>
+    <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
+    <avrtoolserialnumber>J41800051145</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x28AC0CE0</avrdeviceexpectedsignature>
     <com_atmel_avrdbg_tool_samice>
       <ToolOptions>
@@ -282,7 +282,7 @@
           <SwdClock>2000000</SwdClock>
           <JtagDbgClock>7500000</JtagDbgClock>
         </InterfaceProperties>
-        <InterfaceName>JTAG</InterfaceName>
+        <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
       <ToolNumber>J41800051145</ToolNumber>
@@ -627,6 +627,12 @@
     <None Include="src\ASF\common\services\delay\delay.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\AsciiLib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\AsciiLib.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\ASF\common\services\delay\sam\cycle_counter.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1143,6 +1149,12 @@
     <None Include="src\config\conf_spi_master.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\GLCD.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\GLCD.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>

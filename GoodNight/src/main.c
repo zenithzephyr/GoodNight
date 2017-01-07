@@ -30,6 +30,8 @@
  */
 #include <asf.h>
 
+#include "GLCD.h"
+
 #define ADC_CLOCK 6000000
 
 //SPI
@@ -325,10 +327,11 @@ int main (void)
 	configure_wifi();
 	printf("Wifi UART Configured.\r\n");
 
-	configure_adc();	printf("ADC Configured.\r\n");	configure_spi();	printf("SPI Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	adc_start(ADC);
+	configure_adc();	printf("ADC Configured.\r\n");	configure_spi();	printf("SPI Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	//adc_start(ADC);
 
 	//wifi_test();
 	//spi_test();
+	//LCD_Test();
 	while(1) {
 		spi_test();
 		led_test();
