@@ -88,7 +88,7 @@ void board_init(void)
 	gpio_configure_group(PINS_UART1_PIO, PINS_UART1, PINS_UART1_FLAGS); //wifi
 	gpio_configure_pin(WIFI_WAKE_GPIO, WIFI_WAKE_FLAGS);
 	gpio_configure_pin(WIFI_EN_GPIO, WIFI_EN_FLAGS);
-	gpio_configure_pin(WIFI_WAKE_GPIO, WIFI_WAKE_FLAGS);
+	gpio_configure_pin(WIFI_RESET_GPIO, WIFI_RESET_FLAGS);
 
 	/* Configure UHF pins */
 	gpio_configure_pin(UHF_RX_GPIO, UHF_RX_FLAGS);

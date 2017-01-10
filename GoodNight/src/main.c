@@ -197,7 +197,7 @@ static void configure_wifi(void)
 	gpio_set_pin_high(WIFI_EN_GPIO);
 	delay_ms(10);
 	gpio_set_pin_high(WIFI_RESET_GPIO);
-  delay_ms(100);
+	delay_ms(100);
 
 	//Start AT Command
 	usart_serial_write_packet((usart_if)CONF_WIFI_UART,atstart, 13);
@@ -329,12 +329,12 @@ int main (void)
 
 	configure_adc();	printf("ADC Configured.\r\n");	configure_spi();	printf("SPI Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	//adc_start(ADC);
 
-	//wifi_test();
+	wifi_test();
 	//spi_test();
 	//LCD_Test();
 	while(1) {
 		spi_test();
-		led_test();
+		//led_test();
 		delay_s(1);
 	}
 }
