@@ -329,11 +329,11 @@ int main (void)
 
 	configure_adc();	printf("ADC Configured.\r\n");	configure_spi();	printf("SPI Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	//adc_start(ADC);
 
-	wifi_test();
+	//wifi_test();
 	//spi_test();
-	//LCD_Test();
+	LCD_Test();
 	while(1) {
-		spi_test();
+		//spi_test();
 		//led_test();
 		delay_s(1);
 	}
