@@ -30,6 +30,7 @@
  */
 #include <asf.h>
 
+#include "wifi.h"
 #include "GLCD.h"
 
 #define ADC_CLOCK 6000000
@@ -111,7 +112,8 @@ void UART1_Handler(void)
 		uart_write(UART1, rx_data); //send data
 #else
 		while (!(UART0->UART_SR & UART_SR_TXRDY));
-		uart_write(UART0, rx_data); //send data
+		wifi_recv_data(&rx_data, 1);
+		//uart_write(UART0, rx_data); //send data
 #endif
 	}
 }
@@ -168,43 +170,6 @@ static void configure_console(void)
 	stdio_serial_init(CONF_UART, &uart_serial_options);
 }
 
-static void configure_wifi(void)
-{
-	uint8_t atstart[13] = {0xA5, 0x01, 0xF2, 0x00, 0x00, 0x0C, 0x00, 0x0C, 0x00, 0x61, 0x2F, 0x52, 0xEF};
-
-	usart_serial_options_t usart_options = {
-		.baudrate = CONF_WIFI_UART_BAUDRATE,
-		#ifdef CONF_UART_CHAR_LENGTH
-		.charlength = CONF_UART_CHAR_LENGTH,
-		#endif
-		.paritytype = CONF_WIFI_UART_PARITY,
-		#ifdef CONF_UART_STOP_BITS
-		.stopbits = CONF_UART_STOP_BITS,
-		#endif
-	};
-	/* Configure console UART. */
-	usart_serial_init((usart_if)CONF_WIFI_UART, &usart_options);
-
-	uart_enable_interrupt(UART1,UART_IER_RXRDY);
-	NVIC_EnableIRQ(UART1_IRQn);
-
-	//reset pins
-	gpio_set_pin_low(WIFI_WAKE_GPIO);
-	gpio_set_pin_low(WIFI_RESET_GPIO);
-	gpio_set_pin_low(WIFI_EN_GPIO);
-	delay_ms(100);
-	gpio_set_pin_high(WIFI_WAKE_GPIO);
-	gpio_set_pin_high(WIFI_EN_GPIO);
-	delay_ms(10);
-	gpio_set_pin_high(WIFI_RESET_GPIO);
-	delay_ms(100);
-
-	//Start AT Command
-	usart_serial_write_packet((usart_if)CONF_WIFI_UART,atstart, 13);
-	printf("Send ATCommand Start\r\n");
-
-
-}
 
 static void configure_adc(void)
 {
@@ -236,18 +201,6 @@ static void uhf_test()
 	gpio_configure_pin(UHF_DO_GPIO, UHF_DO_FLAGS | PIO_PULLUP);
 	pio_handler_set(PIOA, ID_PIOA, (1 << UHF_DO_GPIO), PIO_IT_EDGE, UHF_DI_Handler);
 	pio_enable_interrupt(PIOA, (1 << UHF_DO_GPIO));
-}
-
-static void wifi_test()
-{
-	delay_ms(1000);
-	usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"AT\r\n", 4);
-	delay_ms(1000);
-	usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"AT+LIST\r\n", 9);
-	delay_ms(1000);
-	usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"AT+CHIPID\r\n",11);
-	delay_ms(1000);
-	usart_serial_write_packet((usart_if)CONF_WIFI_UART,(const uint8_t *)"AT+AP=WINC1500,0,1\r\n",20);
 }
 
 static void led_test()
@@ -324,17 +277,16 @@ int main (void)
 	rtt_init(RTT, 1);
 	printf("RTT Initialized.\r\n");
 
-	configure_wifi();
-	printf("Wifi UART Configured.\r\n");
+	wifi_init();
 
 	configure_adc();	printf("ADC Configured.\r\n");	configure_spi();	printf("SPI Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	//adc_start(ADC);
-
 	//wifi_test();
 	//spi_test();
-	LCD_Test();
+	//LCD_Test();
 	while(1) {
 		//spi_test();
 		//led_test();
+		wifi_parse_buf();
 		delay_s(1);
 	}
 }

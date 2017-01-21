@@ -2,6 +2,8 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+src\wifi.c
+
 src\AsciiLib.c
 
 src\ASF\common\services\delay\sam\cycle_counter.c

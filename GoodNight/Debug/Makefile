@@ -94,6 +94,7 @@ SUBDIRS :=  \
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../src/wifi.c \
 ../src/AsciiLib.c \
 ../src/ASF/common/services/delay/sam/cycle_counter.c \
 ../src/ASF/common/services/clock/sam4s/sysclk.c \
@@ -128,6 +129,7 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+src/wifi.o \
 src/AsciiLib.o \
 src/ASF/common/services/delay/sam/cycle_counter.o \
 src/ASF/common/services/clock/sam4s/sysclk.o \
@@ -155,6 +157,7 @@ src/GLCD.o \
 src/main.o
 
 OBJS_AS_ARGS +=  \
+src/wifi.o \
 src/AsciiLib.o \
 src/ASF/common/services/delay/sam/cycle_counter.o \
 src/ASF/common/services/clock/sam4s/sysclk.o \
@@ -182,6 +185,7 @@ src/GLCD.o \
 src/main.o
 
 C_DEPS +=  \
+src/wifi.d \
 src/AsciiLib.d \
 src/ASF/common/services/delay/sam/cycle_counter.d \
 src/ASF/common/services/clock/sam4s/sysclk.d \
@@ -209,6 +213,7 @@ src/GLCD.d \
 src/main.d
 
 C_DEPS_AS_ARGS +=  \
+src/wifi.d \
 src/AsciiLib.d \
 src/ASF/common/services/delay/sam/cycle_counter.d \
 src/ASF/common/services/clock/sam4s/sysclk.d \
@@ -250,6 +255,8 @@ LINKER_SCRIPT_DEP+=  \
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
