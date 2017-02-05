@@ -287,6 +287,6 @@ int main (void)
 		//spi_test();
 		//led_test();
 		wifi_parse_buf();
-		delay_s(1);
+		//delay_s(1);
 	}
 }
