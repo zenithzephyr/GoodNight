@@ -94,6 +94,9 @@ SUBDIRS :=  \
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../src/gpio_spi.c \
+../src/RH_RF22.c \
+../src/uhf.c \
 ../src/wifi.c \
 ../src/AsciiLib.c \
 ../src/ASF/common/services/delay/sam/cycle_counter.c \
@@ -129,6 +132,9 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+src/gpio_spi.o \
+src/RH_RF22.o \
+src/uhf.o \
 src/wifi.o \
 src/AsciiLib.o \
 src/ASF/common/services/delay/sam/cycle_counter.o \
@@ -157,6 +163,9 @@ src/GLCD.o \
 src/main.o
 
 OBJS_AS_ARGS +=  \
+src/gpio_spi.o \
+src/RH_RF22.o \
+src/uhf.o \
 src/wifi.o \
 src/AsciiLib.o \
 src/ASF/common/services/delay/sam/cycle_counter.o \
@@ -185,6 +194,9 @@ src/GLCD.o \
 src/main.o
 
 C_DEPS +=  \
+src/gpio_spi.d \
+src/RH_RF22.d \
+src/uhf.d \
 src/wifi.d \
 src/AsciiLib.d \
 src/ASF/common/services/delay/sam/cycle_counter.d \
@@ -213,6 +225,9 @@ src/GLCD.d \
 src/main.d
 
 C_DEPS_AS_ARGS +=  \
+src/gpio_spi.d \
+src/RH_RF22.d \
+src/uhf.d \
 src/wifi.d \
 src/AsciiLib.d \
 src/ASF/common/services/delay/sam/cycle_counter.d \
@@ -255,6 +270,12 @@ LINKER_SCRIPT_DEP+=  \
 
 
 # AVR32/GNU C Compiler
+
+
+
+
+
+
 
 
 

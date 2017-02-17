@@ -2,6 +2,12 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+src\gpio_spi.c
+
+src\RH_RF22.c
+
+src\uhf.c
+
 src\wifi.c
 
 src\AsciiLib.c

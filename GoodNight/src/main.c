@@ -31,6 +31,8 @@
 #include <asf.h>
 
 #include "wifi.h"
+#include "uhf.h"
+
 #include "GLCD.h"
 
 #define ADC_CLOCK 6000000
@@ -118,20 +120,6 @@ void UART1_Handler(void)
 	}
 }
 
-static void UHF_DI_Handler(const uint32_t id, const uint32_t index)
-{
-	uint32_t status;
-	status = pio_get_interrupt_status(PIOA);
-	printf("UHF DI Interrupt (%lu)\r\n", status);
-
-	if ((id == ID_PIOA) && (index == (1 << UHF_DO_GPIO))){
-		//if (pio_get(PIOA, PIO_TYPE_PIO_INPUT, (1 << UHF_DO_GPIO)))
-		//pio_clear(PIOA, PIO_PA23);
-		//else
-		//pio_set(PIOA, PIO_PA23);
-	}
-}
-
 /** configures */
 static void configure_led(void)
 {
@@ -195,14 +183,6 @@ static void configure_adc(void)
 }
 
 /** test functions */
-static void uhf_test()
-{
-	//UHF DI
-	gpio_configure_pin(UHF_DO_GPIO, UHF_DO_FLAGS | PIO_PULLUP);
-	pio_handler_set(PIOA, ID_PIOA, (1 << UHF_DO_GPIO), PIO_IT_EDGE, UHF_DI_Handler);
-	pio_enable_interrupt(PIOA, (1 << UHF_DO_GPIO));
-}
-
 static void led_test()
 {
 		gpio_toggle_pin(LED0_GPIO);
@@ -277,16 +257,21 @@ int main (void)
 	rtt_init(RTT, 1);
 	printf("RTT Initialized.\r\n");
 
-	wifi_init();
+	//wifi_init();
+
+	uhf_init();
 
 	configure_adc();	printf("ADC Configured.\r\n");	configure_spi();	printf("SPI Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	//adc_start(ADC);
 	//wifi_test();
 	//spi_test();
-	//LCD_Test();
+	LCD_Test();
+	//uhf_test();
+
 	while(1) {
 		//spi_test();
 		//led_test();
 		wifi_parse_buf();
+		uhf_test();
 		//delay_s(1);
 	}
 }

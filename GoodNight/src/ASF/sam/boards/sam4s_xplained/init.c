@@ -91,12 +91,11 @@ void board_init(void)
 	gpio_configure_pin(WIFI_RESET_GPIO, WIFI_RESET_FLAGS);
 
 	/* Configure UHF pins */
-	gpio_configure_pin(UHF_RX_GPIO, UHF_RX_FLAGS);
-	gpio_configure_pin(UHF_BR0_GPIO, UHF_BR0_FLAGS);
-	gpio_configure_pin(UHF_BR1_GPIO, UHF_BR1_FLAGS);
-	gpio_configure_pin(UHF_ASK_GPIO, UHF_ASK_FLAGS);
-	gpio_configure_pin(UHF_DO_GPIO, UHF_DO_FLAGS);
-	gpio_configure_pin(UHF_ENA_GPIO, UHF_ENA_FLAGS);
+	gpio_configure_pin(UHF_SDO_GPIO, UHF_SDO_FLAGS);
+	gpio_configure_pin(UHF_SDI_GPIO, UHF_SDI_FLAGS);
+	gpio_configure_pin(UHF_SCLK_GPIO, UHF_SCLK_FLAGS);
+	gpio_configure_pin(UHF_NSEL_GPIO, UHF_NSEL_FLAGS);
+	gpio_configure_pin(UHF_NIRQ_GPIO, UHF_NIRQ_FLAGS);
 
 	/* Configure ultrasonic wate pins */
 	gpio_configure_pin(UWAVE_TRIG_GPIO, UWAVE_TRIG_FLAGS);
