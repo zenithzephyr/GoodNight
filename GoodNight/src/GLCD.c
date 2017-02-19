@@ -759,6 +759,10 @@ void LCD_Initializtion(void)
 		}
 	}
     delay_ms(50);   /* delay 50 ms */
+
+    LCD_Clear(Black);
+
+    printf("LCD Initialized\r\n");
 }
 
 /*******************************************************************************
@@ -1069,12 +1073,12 @@ void LCD_Test(void)
   //LCD_WriteData(0xAABB);
   //LCD_WriteIndex(0x00CD);
 
-  LCD_Initializtion();
+  //LCD_Initializtion();
 
-  LCD_Clear(Black);
-  GUI_Text(100,100,"HAJIHONG", White, Black);
-  LCD_DrawLine(100,200,200,200, Red);
-  LCD_DrawLine(150,100,150,200, Green);
+//  GUI_Text(100,100,"HAJIHONG", White, Black);
+
+//  LCD_DrawLine(100,200,200,200, Red);
+//  LCD_DrawLine(150,100,150,200, Green);
 }
 
 /*********************************************************************************************************

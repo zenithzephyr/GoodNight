@@ -257,14 +257,15 @@ int main (void)
 	rtt_init(RTT, 1);
 	printf("RTT Initialized.\r\n");
 
-	//wifi_init();
+	wifi_init();
+
+	LCD_Initializtion();
 
 	uhf_init();
 
 	configure_adc();	printf("ADC Configured.\r\n");	configure_spi();	printf("SPI Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	//adc_start(ADC);
 	//wifi_test();
 	//spi_test();
-	LCD_Test();
 	//uhf_test();
 
 	while(1) {

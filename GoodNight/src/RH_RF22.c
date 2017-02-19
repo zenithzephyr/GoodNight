@@ -141,10 +141,10 @@ void si4432_handleInterrupt()
     // Read the interrupt flags which clears the interrupt
     SPIBurstReadByte(RH_RF22_REG_03_INTERRUPT_STATUS1, _lastInterruptFlags, 2);
 
-#if 1
+#if 0
     // DEVELOPER TESTING ONLY
     // Caution: Serial printing in this interrupt routine can cause mysterious crashes
-    printf("interrupt %x %x",_lastInterruptFlags[0], _lastInterruptFlags[1]);
+    printf("interrupt %x %x\r\n",_lastInterruptFlags[0], _lastInterruptFlags[1]);
     if (_lastInterruptFlags[0] == 0 && _lastInterruptFlags[1] == 0)
 	   printf("FUNNY: no interrupt!");
 #endif

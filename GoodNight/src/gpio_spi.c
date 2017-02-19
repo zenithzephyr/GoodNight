@@ -99,7 +99,7 @@ uint8_t SPIReadByte(uint8_t addr)
   gpio_set_pin_high(GPIO_NCS);
   SPIDelay(TSW_DELAY);
 
-  printf("READ %02x : %02x\r\n", addr, dummy_data);
+  //printf("READ %02x : %02x\r\n", addr, dummy_data);
   return dummy_data;
 }
 
@@ -107,7 +107,7 @@ uint8_t SPIWriteByte(uint8_t addr, uint8_t data)
 {
   uint8_t dummy_data;
 
-  printf("WRITE %02x : %02x\r\n", addr, data);
+  //printf("WRITE %02x : %02x\r\n", addr, data);
 
   gpio_set_pin_low(GPIO_NCS);
   SPIDelay(TEN_DELAY);
@@ -126,7 +126,10 @@ uint8_t SPIWriteByte(uint8_t addr, uint8_t data)
 uint8_t SPIBurstReadByte(uint8_t addr, uint8_t *buf, uint8_t size)
 {
   for(int i=0;i<size;i++) {
+    if(addr < 0x7F)
     *buf++ = SPIReadByte(addr++);
+    else
+    *buf++ = SPIReadByte(addr);
   }
 }
 
