@@ -6,6 +6,8 @@ src\gpio_spi.c
 
 src\RH_RF22.c
 
+src\spi_flash.c
+
 src\uhf.c
 
 src\wifi.c

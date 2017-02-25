@@ -635,6 +635,12 @@
     <Compile Include="src\RH_RF22.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\spi_flash.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\spi_flash.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\uhf.c">
       <SubType>compile</SubType>
     </Compile>

@@ -96,6 +96,7 @@ SUBDIRS :=  \
 C_SRCS +=  \
 ../src/gpio_spi.c \
 ../src/RH_RF22.c \
+../src/spi_flash.c \
 ../src/uhf.c \
 ../src/wifi.c \
 ../src/AsciiLib.c \
@@ -134,6 +135,7 @@ ASM_SRCS +=
 OBJS +=  \
 src/gpio_spi.o \
 src/RH_RF22.o \
+src/spi_flash.o \
 src/uhf.o \
 src/wifi.o \
 src/AsciiLib.o \
@@ -165,6 +167,7 @@ src/main.o
 OBJS_AS_ARGS +=  \
 src/gpio_spi.o \
 src/RH_RF22.o \
+src/spi_flash.o \
 src/uhf.o \
 src/wifi.o \
 src/AsciiLib.o \
@@ -196,6 +199,7 @@ src/main.o
 C_DEPS +=  \
 src/gpio_spi.d \
 src/RH_RF22.d \
+src/spi_flash.d \
 src/uhf.d \
 src/wifi.d \
 src/AsciiLib.d \
@@ -227,6 +231,7 @@ src/main.d
 C_DEPS_AS_ARGS +=  \
 src/gpio_spi.d \
 src/RH_RF22.d \
+src/spi_flash.d \
 src/uhf.d \
 src/wifi.d \
 src/AsciiLib.d \
@@ -270,6 +275,8 @@ LINKER_SCRIPT_DEP+=  \
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

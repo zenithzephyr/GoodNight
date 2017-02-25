@@ -32,15 +32,11 @@
 
 #include "wifi.h"
 #include "uhf.h"
+#include "spi_flash.h"
 
 #include "GLCD.h"
 
 #define ADC_CLOCK 6000000
-
-//SPI
-struct spi_device spi_device_conf = {
-	.id = 0
-};
 
 /** Interrupt Handlers */
 void ADC_Handler(void)
@@ -128,17 +124,6 @@ static void configure_led(void)
 	gpio_set_pin_high(LED1_GPIO);
 }
 
-static void configure_spi(void)
-{
-	//Init SPI module as master
-	spi_master_init(SPI);
-
-	 //Setup parameters for the slave device
-	spi_master_setup_device(SPI, &spi_device_conf, SPI_MODE_0, 50000000, 0); //50MHz
-
-	//Allow the module to transfer data
-	spi_enable(SPI);
-}
 
 static void configure_console(void)
 {
@@ -201,39 +186,6 @@ static void rtt_test()
 	printf("RTT = %lu\r\n", rtt_value);
 }
 
-static void spi_test()
-{
-	int i;
-	//Buffer to send data to SPI slave
-	uint8_t txdata[4]={0x90, 0x00, 0x00, 0x00};
-	//Buffer to receive data from SPI slave
-	uint8_t rxdata[128] = {0, };
-
-	// Select the slave device with chip select
-	spi_select_device(SPI,&spi_device_conf);
-	// Send the data to slave
-	spi_write_packet(SPI, txdata, 4);
-	// Read data from slave
-	spi_read_packet(SPI, rxdata,2);
-
-	printf("Read Device ID : 0x%X 0x%X\r\n", rxdata[0], rxdata[1]);
-	spi_deselect_device(SPI,&spi_device_conf);
-
-	delay_ms(10);
-
-	spi_select_device(SPI,&spi_device_conf);
-	//Read Data
-	txdata[0] = 0x03;
-	spi_write_packet(SPI, txdata, 4);
-	// Read data from slave
-	spi_read_packet(SPI, rxdata,128);
-	for(i=0;i<128;i++)
-	printf("%X ",rxdata[i]);
-	printf("\r\n");
-
-	// Deselect the slave
-	spi_deselect_device(SPI,&spi_device_conf);
-}
 
 /** main */
 int main (void)
@@ -257,13 +209,15 @@ int main (void)
 	rtt_init(RTT, 1);
 	printf("RTT Initialized.\r\n");
 
+	spi_flash_init();
+
 	wifi_init();
 
 	LCD_Initializtion();
 
 	uhf_init();
 
-	configure_adc();	printf("ADC Configured.\r\n");	configure_spi();	printf("SPI Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	//adc_start(ADC);
+	configure_adc();	printf("ADC Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	//adc_start(ADC);
 	//wifi_test();
 	//spi_test();
 	//uhf_test();

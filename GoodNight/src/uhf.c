@@ -45,6 +45,8 @@ void uhf_init(void)
 
   printf("UHF Initialized\r\n");
 
+	//for(int i=0;i<0x7F;i++)
+		//printf("%x %x\r\n",i, SPIReadByte(i));
 //LCD Display
 		GUI_Text(20, 50, "Tire ID     : ",White, Black);
 		GUI_Text(20, 70, "Pressure    : ",White, Black);
