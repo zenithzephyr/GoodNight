@@ -48,20 +48,24 @@ void uhf_init(void)
 	//for(int i=0;i<0x7F;i++)
 		//printf("%x %x\r\n",i, SPIReadByte(i));
 //LCD Display
-		GUI_Text(20, 50, "Tire ID     : ",White, Black);
-		GUI_Text(20, 70, "Pressure    : ",White, Black);
-		GUI_Text(20, 90, "Voltage     : ",White, Black);
-		GUI_Text(20, 110, "Temperature : ",White, Black);
-		GUI_Text(20, 130, "Frame ID    : ",White, Black);
+		GUI_Text(20, 50, "Tire ID     :  ",White, Black);
+		GUI_Text(20, 75, "Pressure    :  ",White, Black);
+		GUI_Text(20, 100, "Z-axis      :  ",White, Black);
+		GUI_Text(20, 125, "X-axis      :  ",White, Black);
+		GUI_Text(20, 150, "Voltage     :  ",White, Black);
+		GUI_Text(20, 175, "Temperature :  ",White, Black);
+		GUI_Text(20, 200, "Frame ID    :  ",White, Black);
+		GUI_Text(20, 225, "Sequence    :  ",White, Black);
+		GUI_Text(20, 250, "Status      :  ",White, Black);
 }
 
 void uhf_test()
 {
-	uint32_t tire_id = 0;
+	uint32_t tire_id = 0, frame_id = 0;
 	uint16_t pressure = 0;
 	uint16_t accelZ = 0, accelX = 0;
-	uint8_t voltage = 0, temperature = 0;
-	uint16_t frame_id = 0;
+	uint8_t voltage = 0, temperature = 0, status = 0;
+	uint16_t sequence = 0;
 	char str_buf[32];
 
 	if (si4432_available()) {
@@ -76,21 +80,31 @@ void uhf_test()
 			accelX = buf[9] << 8 | buf[10];
 			voltage = buf[11];
 			temperature = buf[12];
-			frame_id = buf[14] << 8 | buf[15];
-			printf(" TireID[0x%x] Pressure[%d] AccelZ[%d] AccelX[%d] Voltage[%d] Temperature[%d] FrameID[%d]\r\n",
+			sequence = buf[14] << 8 | buf[15];
+			frame_id = buf[18] <<24 | buf[19] <<16 | buf[20] <<8 | buf[21];
+			status = buf[13];
+			printf(" TireID[0x%x] Pressure[%d] AccelZ[%d] AccelX[%d] Voltage[%d] Temperature[%d] FrameID[0x%x]\r\n",
 		tire_id, pressure, accelZ, accelX, voltage, temperature, frame_id);
 
 		//test
 		sprintf(str_buf, "%X", tire_id);
 		GUI_Text(125, 50, str_buf ,White, Black);
 		sprintf(str_buf, "%d   ", pressure);
-		GUI_Text(125, 70, str_buf ,White, Black);
+		GUI_Text(125, 75, str_buf ,White, Black);
+		sprintf(str_buf, "%d   ", accelZ);
+		GUI_Text(125, 100, str_buf ,White, Black);
+		sprintf(str_buf, "%d   ", accelX);
+		GUI_Text(125, 125, str_buf ,White, Black);
 		sprintf(str_buf, "%d   ", voltage);
-		GUI_Text(125, 90, str_buf ,White, Black);
-		sprintf(str_buf, "%d   ", temperature);
-		GUI_Text(125, 110, str_buf ,White, Black);
-		sprintf(str_buf, "%d      ", frame_id);
-		GUI_Text(125, 130, str_buf ,White, Black);
+		GUI_Text(125, 150, str_buf ,White, Black);
+		sprintf(str_buf, "%d      ", temperature);
+		GUI_Text(125, 175, str_buf ,White, Black);
+		sprintf(str_buf, "%X", frame_id);
+		GUI_Text(125, 200, str_buf ,White, Black);
+		sprintf(str_buf, "%d      ", sequence);
+		GUI_Text(125, 225, str_buf ,White, Black);
+		sprintf(str_buf, "%d      ", status);
+		GUI_Text(125, 250, str_buf ,White, Black);
 #if 0
       for(int i=0;i<len;i++) {
         printf("%X ", buf[i]);
