@@ -7,6 +7,8 @@
 #include "gpio_spi.h"
 #include "GLCD.h" //for test
 
+int8_t x = -10; //offset
+
 static void UHF_IRQ_Handler(const uint32_t id, const uint32_t index)
 {
 	uint32_t status;
@@ -48,15 +50,16 @@ void uhf_init(void)
 	//for(int i=0;i<0x7F;i++)
 		//printf("%x %x\r\n",i, SPIReadByte(i));
 //LCD Display
-		GUI_Text(20, 50, "Tire ID     :  ",White, Black);
-		GUI_Text(20, 75, "Pressure    :  ",White, Black);
-		GUI_Text(20, 100, "Z-axis      :  ",White, Black);
-		GUI_Text(20, 125, "X-axis      :  ",White, Black);
-		GUI_Text(20, 150, "Voltage     :  ",White, Black);
-		GUI_Text(20, 175, "Temperature :  ",White, Black);
-		GUI_Text(20, 200, "Frame ID    :  ",White, Black);
-		GUI_Text(20, 225, "Sequence    :  ",White, Black);
-		GUI_Text(20, 250, "Status      :  ",White, Black);
+		GUI_Text(20, x+50, "Tire ID     :  ",White, Black);
+		GUI_Text(20, x+75, "Pressure    :  ",White, Black);
+		GUI_Text(20, x+100, "Z-axis      :  ",White, Black);
+		GUI_Text(20, x+125, "X-axis      :  ",White, Black);
+		GUI_Text(20, x+150, "Voltage     :  ",White, Black);
+		GUI_Text(20, x+175, "Temperature :  ",White, Black);
+		GUI_Text(20, x+200, "Frame ID    :  ",White, Black);
+		GUI_Text(20, x+225, "Sequence    :  ",White, Black);
+		GUI_Text(20, x+250, "Status      :  ",White, Black);
+		GUI_Text(20, x+275, "RSSI        :  ",White, Black);
 }
 
 void uhf_test()
@@ -66,6 +69,15 @@ void uhf_test()
 	uint16_t accelZ = 0, accelX = 0;
 	uint8_t voltage = 0, temperature = 0, status = 0;
 	uint16_t sequence = 0;
+	int8_t rssi = 0;
+
+	static uint32_t last_tire_id = 0, last_frame_id = 0;
+	static uint16_t last_pressure = 0;
+	static uint16_t last_accelZ = 0, last_accelX = 0;
+	static uint8_t last_voltage = 0, last_temperature = 0, last_status = 0;
+	static uint16_t last_sequence = 0;
+	static int8_t last_rssi = 0;
+
 	char str_buf[32];
 
 	if (si4432_available()) {
@@ -83,28 +95,62 @@ void uhf_test()
 			sequence = buf[14] << 8 | buf[15];
 			frame_id = buf[18] <<24 | buf[19] <<16 | buf[20] <<8 | buf[21];
 			status = buf[13];
-			printf(" TireID[0x%x] Pressure[%d] AccelZ[%d] AccelX[%d] Voltage[%d] Temperature[%d] FrameID[0x%x]\r\n",
-		tire_id, pressure, accelZ, accelX, voltage, temperature, frame_id);
+			rssi = -120+si4432_rssiRead()/2;
+			printf(" TireID[0x%x] Pressure[%d] AccelZ[%d] AccelX[%d] Voltage[%d] Temperature[%d] FrameID[0x%x] RSSI[%d]\r\n",
+		tire_id, pressure, accelZ, accelX, voltage, temperature, frame_id, rssi);
 
 		//test
-		sprintf(str_buf, "%X", tire_id);
-		GUI_Text(125, 50, str_buf ,White, Black);
+		if(tire_id != last_tire_id) {
+			sprintf(str_buf, "%X", tire_id);
+			GUI_Text(125, x+50, str_buf ,White, Black);
+		}
+		if(pressure != last_pressure) {
 		sprintf(str_buf, "%d   ", pressure);
-		GUI_Text(125, 75, str_buf ,White, Black);
+		GUI_Text(125, x+75, str_buf ,White, Black);
+		}
+		if(accelZ != last_accelZ) {
 		sprintf(str_buf, "%d   ", accelZ);
-		GUI_Text(125, 100, str_buf ,White, Black);
+		GUI_Text(125, x+100, str_buf ,White, Black);
+	  }
+		if(accelX != last_accelX) {
 		sprintf(str_buf, "%d   ", accelX);
-		GUI_Text(125, 125, str_buf ,White, Black);
+		GUI_Text(125, x+125, str_buf ,White, Black);
+		}
+		if(voltage != last_voltage) {
 		sprintf(str_buf, "%d   ", voltage);
-		GUI_Text(125, 150, str_buf ,White, Black);
+		GUI_Text(125, x+150, str_buf ,White, Black);
+		}
+		if(temperature != last_temperature) {
 		sprintf(str_buf, "%d      ", temperature);
-		GUI_Text(125, 175, str_buf ,White, Black);
+		GUI_Text(125, x+175, str_buf ,White, Black);
+		}
+		if(frame_id != last_frame_id) {
 		sprintf(str_buf, "%X", frame_id);
-		GUI_Text(125, 200, str_buf ,White, Black);
+		GUI_Text(125, x+200, str_buf ,White, Black);
+		}
+		if(sequence != last_sequence) {
 		sprintf(str_buf, "%d      ", sequence);
-		GUI_Text(125, 225, str_buf ,White, Black);
+		GUI_Text(125, x+225, str_buf ,White, Black);
+		}
+		if(status != last_status) {
 		sprintf(str_buf, "%d      ", status);
-		GUI_Text(125, 250, str_buf ,White, Black);
+		GUI_Text(125, x+250, str_buf ,White, Black);
+		}
+
+		if(rssi != last_rssi) {
+		sprintf(str_buf, "%ddBm   ", rssi);
+		GUI_Text(125, x+275, str_buf ,White, Black);
+	  }
+
+		last_tire_id = tire_id;
+		last_pressure = pressure;
+		last_accelZ = accelZ;
+		last_voltage = voltage;
+		last_temperature = temperature;
+		last_sequence = sequence;
+		last_frame_id = frame_id;
+		last_status = status;
+		last_rssi = rssi;
 #if 0
       for(int i=0;i<len;i++) {
         printf("%X ", buf[i]);
