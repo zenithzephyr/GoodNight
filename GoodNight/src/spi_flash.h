@@ -10,8 +10,8 @@ void spi_flash_read_jedec(uint8_t *buf);
 
 void spi_flash_init(void);
 
-void spi_flash_read();
-void spi_flash_write();
+//void spi_flash_read();
+//void spi_flash_write();
 void spi_test(void);
 
 //TODO : flash read, flash write

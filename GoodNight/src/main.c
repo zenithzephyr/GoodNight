@@ -219,7 +219,7 @@ int main (void)
 
 	configure_adc();	printf("ADC Configured.\r\n");	configure_led();	printf("LED Configured.\r\n");	// ADC Start	//adc_start(ADC);
 	//wifi_test();
-	//spi_test();
+	spi_test();
 	//uhf_test();
 
 	while(1) {

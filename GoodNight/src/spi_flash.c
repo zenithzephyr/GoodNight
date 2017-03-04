@@ -7,6 +7,9 @@ struct spi_device spi_device_conf = {
 	.id = 0
 };
 
+int32_t spi_flash_read(uint32_t a, uint32_t size, uint8_t *b);
+int8_t spi_flash_write(uint32_t a, uint32_t size, uint8_t *b);
+
 struct flash_info_t {
     char name[16];
     uint8_t jedec_id[6]; //INFO6
@@ -66,10 +69,61 @@ void spi_flash_read_jedec(uint8_t *buf)
 	spi_deselect_device(SPI,&spi_device_conf);
 }
 
+int32_t spi_flash_read(uint32_t a, uint32_t size, uint8_t *b)
+{
+	uint8_t cmd = SPI_FLASH_CMD_READ;
+  uint8_t addr[3] = {0, 0, 0};
+  uint8_t buf[256];
+
+	spi_select_device(SPI,&spi_device_conf);
+
+	spi_write_packet(SPI, &cmd, 1);
+	spi_write_packet(SPI, addr, 3);
+
+	spi_read_packet(SPI, buf, 256);
+
+  for(int i=0;i<256;i++) {
+      printf("I = %d\r\n",buf[i]);
+  }
+
+	spi_deselect_device(SPI,&spi_device_conf);
+}
+
+int8_t spi_flash_write(uint32_t a, uint32_t size, uint8_t *b)
+{
+	uint8_t cmd = SPI_FLASH_CMD_PROG;
+  uint8_t addr[3] = {0, 0, 0};
+
+	spi_select_device(SPI,&spi_device_conf);
+  cmd = 0x06;
+	spi_write_packet(SPI, &cmd, 1);
+	spi_deselect_device(SPI,&spi_device_conf);
+
+  cmd = SPI_FLASH_CMD_PROG;
+	spi_select_device(SPI,&spi_device_conf);
+
+	spi_write_packet(SPI, &cmd, 1);
+	spi_write_packet(SPI, addr, 3);
+
+  for(int i=0;i<256;i++) {
+    cmd = i;
+    spi_write_packet(SPI, &cmd, 1);
+  }
+
+	spi_deselect_device(SPI,&spi_device_conf);
+
+	spi_select_device(SPI,&spi_device_conf);
+  cmd = 0x04;
+	spi_write_packet(SPI, &cmd, 1);
+	spi_deselect_device(SPI,&spi_device_conf);
+}
+
 void spi_test()
 {
 	int i;
 
+ // spi_flash_write(0,0,NULL);
+  spi_flash_read(0,0,NULL);
 #if 0
 	spi_select_device(SPI,&spi_device_conf);
 	//Read Data
