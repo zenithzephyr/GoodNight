@@ -4,6 +4,8 @@
 
 #include "wifi.h"
 
+#include "uhf.h"
+
 #define MAX_WIFI_BUF_LEN  2048
 uint8_t wifi_buf[MAX_WIFI_BUF_LEN];
 uint16_t wifi_buf_len;
@@ -128,28 +130,57 @@ void wifi_parse_token()
       ptr = strtok(NULL, ","); //T
       ptr = strtok(NULL, ",");
 
-  //Psuedo DATA
+      char *dat_ptr;
+      char data[2048];
+      uint16_t data_len;
+
         if(strncmp(ptr, "TDAT", 4) == 0) {
-          char *dat_ptr;
-          char data[2048];
-          uint16_t data_len;
-          uint32_t id;
+          char truck_id[16], tire_id[16];
           uint16_t press, volt, temp;
-          press = rand() % 9999;
-          volt = rand() % 9999;
-          temp = rand() % 9999;
 
           dat_ptr = strtok(ptr, "|");
           dat_ptr = strtok(NULL, "|");
-          id = atoi(dat_ptr);
+          strcpy(truck_id, dat_ptr);
+          dat_ptr = strtok(NULL, "|");
+          strcpy(tire_id, dat_ptr);
 
-          sprintf(data, "TDAT|%d|%04d|%04d|%04d|", id, press, volt, temp);
+          uhf_load_data(atoi(truck_id), atoi(tire_id), &press, &volt, &temp);
+
+          sprintf(data, "TDAT|%s|%s|%04d|%04d|%04d|", truck_id, tire_id, press, volt, temp);
           data_len = strlen(data);
           sprintf(wifi_cmd_buf, "%cS1%04d%s%cE\r\n",1,data_len, data,1);
           wifi_send_data(wifi_cmd_buf, strlen(wifi_cmd_buf));
       //    printf("(%d)wifi cmd : %s]",data_len, wifi_cmd_buf);
       //    for(int i=0;i<strlen(wifi_cmd_buf);i++)
       //      printf("%x ",wifi_cmd_buf[i]);
+        } else if(strncmp(ptr, "WDAT", 4) == 0) {  //Wets
+          char truck_id[16], tire_id[16];
+          uint16_t press, volt, temp;
+
+          dat_ptr = strtok(ptr, "|");
+          dat_ptr = strtok(NULL, "|");
+          strcpy(truck_id, dat_ptr);
+          dat_ptr = strtok(NULL, "|");
+          strcpy(tire_id, dat_ptr);
+
+          uhf_load_data(atoi(truck_id), atoi(tire_id), &press, &volt, &temp);
+
+          sprintf(data, "WDAT|%s|%s|%04d|%04d|", truck_id, tire_id, volt, temp);
+          data_len = strlen(data);
+          sprintf(wifi_cmd_buf, "%cS1%04d%s%cE\r\n",1,data_len, data,1);
+          wifi_send_data(wifi_cmd_buf, strlen(wifi_cmd_buf));
+        } else if(strncmp(ptr, "LDAT", 4) == 0) { //Light
+          //TODO
+        } else if(strncmp(ptr, "CDAT", 4) == 0) { //Cargo
+          sprintf(data, "CDAT|%d|", gpio_pin_is_high(UWAVE_ECHO_GPIO));
+          data_len = strlen(data);
+          sprintf(wifi_cmd_buf, "%cS1%04d%s%cE\r\n",1,data_len, data,1);
+          wifi_send_data(wifi_cmd_buf, strlen(wifi_cmd_buf));
+        } else if(strncmp(ptr, "DDAT", 4) == 0) { //Door
+          sprintf(data, "DDAT|%d|", gpio_pin_is_high(DOOR_GPIO));
+          data_len = strlen(data);
+          sprintf(wifi_cmd_buf, "%cS1%04d%s%cE\r\n",1,data_len, data,1);
+          wifi_send_data(wifi_cmd_buf, strlen(wifi_cmd_buf));
         } else {
 
         }

@@ -9,6 +9,17 @@
 
 int8_t x = -10; //offset
 
+#define MAX_SAVE_COUNT	128
+struct saved_data_t {
+		uint32_t truck_id;
+		uint32_t tire_id;
+		uint16_t pressure;
+		uint8_t voltage;
+		uint8_t temperature;
+};
+
+struct saved_data_t saved_list[MAX_SAVE_COUNT];
+
 static void UHF_IRQ_Handler(const uint32_t id, const uint32_t index)
 {
 	uint32_t status;
@@ -96,8 +107,15 @@ void uhf_test()
 			frame_id = buf[18] <<24 | buf[19] <<16 | buf[20] <<8 | buf[21];
 			status = buf[13];
 			rssi = -120+si4432_rssiRead()/2;
+
+			pressure = ((pressure + 35.3636) * 2.75) * 0.145; //PSI
+			temperature = ((temperature - 55) * 1.8) + 32; //F
+			voltage = voltage + 122; //10mv
+
 			printf(" TireID[0x%x] Pressure[%d] AccelZ[%d] AccelX[%d] Voltage[%d] Temperature[%d] FrameID[0x%x] RSSI[%d]\r\n",
 		tire_id, pressure, accelZ, accelX, voltage, temperature, frame_id, rssi);
+
+		uhf_save_data(tire_id, frame_id, pressure, voltage, temperature);
 
 		//test
 		if(tire_id != last_tire_id) {
@@ -105,7 +123,7 @@ void uhf_test()
 			GUI_Text(125, x+50, str_buf ,White, Black);
 		}
 		if(pressure != last_pressure) {
-		sprintf(str_buf, "%d   ", pressure);
+		sprintf(str_buf, "%dPSI  ", pressure);
 		GUI_Text(125, x+75, str_buf ,White, Black);
 		}
 		if(accelZ != last_accelZ) {
@@ -117,11 +135,11 @@ void uhf_test()
 		GUI_Text(125, x+125, str_buf ,White, Black);
 		}
 		if(voltage != last_voltage) {
-		sprintf(str_buf, "%d   ", voltage);
+		sprintf(str_buf, "%dmV   ", voltage*10);
 		GUI_Text(125, x+150, str_buf ,White, Black);
 		}
 		if(temperature != last_temperature) {
-		sprintf(str_buf, "%d      ", temperature);
+		sprintf(str_buf, "%dF     ", temperature);
 		GUI_Text(125, x+175, str_buf ,White, Black);
 		}
 		if(frame_id != last_frame_id) {
@@ -162,4 +180,49 @@ void uhf_test()
       printf("recv failed");
     }
   }
+}
+
+void uhf_load_data(uint32_t truck_id, uint32_t tire_id, uint16_t *pressure, uint16_t *voltage, uint16_t *temp)
+{
+	int i;
+	for(i=0;i<MAX_SAVE_COUNT;i++) {
+		if(saved_list[i].truck_id == truck_id && saved_list[i].tire_id == tire_id) {
+			break;
+		}
+	}
+	if(i < MAX_SAVE_COUNT) {
+		*pressure = saved_list[i].pressure;
+		*voltage = saved_list[i].voltage;
+		*temp = saved_list[i].temperature;
+	} else {
+		*pressure = 0;
+		*voltage = 0;
+		*temp = 0;
+	}
+}
+
+void uhf_save_data(uint32_t truck_id, uint32_t tire_id, uint16_t pressure, uint16_t voltage, uint16_t temp)
+{
+	int i;
+
+	for(i=0;i<MAX_SAVE_COUNT;i++) {
+		if(saved_list[i].truck_id == truck_id && saved_list[i].tire_id == tire_id) {
+			break;
+		}
+	}
+
+	if(i < MAX_SAVE_COUNT) {
+		saved_list[i].pressure = pressure;
+		saved_list[i].voltage = voltage;
+		saved_list[i].temperature = temp;
+	} else {
+		for(i=0;i<MAX_SAVE_COUNT;i++) {
+			if(saved_list[i].truck_id == 0 && saved_list[i].tire_id == 0) {
+				saved_list[i].pressure = pressure;
+				saved_list[i].voltage = voltage;
+				saved_list[i].temperature = temp;
+				break;
+			}
+		}
+	}
 }
