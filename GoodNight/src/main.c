@@ -38,50 +38,51 @@
 
 #define ADC_CLOCK 6000000
 
+uint32_t light[8];
+
 /** Interrupt Handlers */
 void ADC_Handler(void)
 {
 	// Check the ADC conversion status
 	uint32_t status;
-	uint32_t result;
+	//uint32_t result;
 
 	status = adc_get_status(ADC);
 
 	if(status & (1 << ADC_CHANNEL_0)) {
-		result = adc_get_channel_value(ADC, ADC_CHANNEL_0);
-		printf("ADC0 result = %x\t", (unsigned int)result);
+		light[0] = adc_get_channel_value(ADC, ADC_CHANNEL_0);
+		//printf("ADC0 result = %x\t", (unsigned int)light[0]);
 	}
-
 	if(status & (1 << ADC_CHANNEL_1)) {
-		result = adc_get_channel_value(ADC, ADC_CHANNEL_1);
-		printf("ADC1 result = %x\t", (unsigned int)result);
+		light[1] = adc_get_channel_value(ADC, ADC_CHANNEL_1);
+		//printf("ADC1 result = %x\t", (unsigned int)result);
 	}
 	if(status & (1 << ADC_CHANNEL_2)) {
-		result = adc_get_channel_value(ADC, ADC_CHANNEL_2);
-		printf("ADC2 result = %x\t", (unsigned int)result);
+		light[2] = adc_get_channel_value(ADC, ADC_CHANNEL_2);
+		//printf("ADC2 result = %x\t", (unsigned int)result);
 	}
 	if(status & (1 << ADC_CHANNEL_3)) {
-		result = adc_get_channel_value(ADC, ADC_CHANNEL_3);
-		printf("ADC3 result = %x\t", (unsigned int)result);
+		light[3] = adc_get_channel_value(ADC, ADC_CHANNEL_3);
+		//printf("ADC3 result = %x\t", (unsigned int)result);
 	}
 	if(status & (1 << ADC_CHANNEL_4)) {
-		result = adc_get_channel_value(ADC, ADC_CHANNEL_4);
-		printf("ADC4 result = %x\t", (unsigned int)result);
+		light[4] = adc_get_channel_value(ADC, ADC_CHANNEL_4);
+		//printf("ADC4 result = %x\t", (unsigned int)result);
 	}
 	if(status & (1 << ADC_CHANNEL_5)) {
-		result = adc_get_channel_value(ADC, ADC_CHANNEL_5);
-		printf("ADC5 result = %x\t", (unsigned int)result);
+		light[5] = adc_get_channel_value(ADC, ADC_CHANNEL_5);
+		//printf("ADC5 result = %x\t", (unsigned int)result);
 	}
 	if(status & (1 << ADC_CHANNEL_8)) {
-		result = adc_get_channel_value(ADC, ADC_CHANNEL_8);
-		printf("ADC8 result = %x\t", (unsigned int)result);
+		light[6] = adc_get_channel_value(ADC, ADC_CHANNEL_8);
+		//printf("ADC8 result = %x\t", (unsigned int)result);
 	}
 	if(status & (1 << ADC_CHANNEL_9)) {
-		result = adc_get_channel_value(ADC, ADC_CHANNEL_9);
-		printf("ADC9 result = %x\t", (unsigned int)result);
+		light[7] = adc_get_channel_value(ADC, ADC_CHANNEL_9);
+		//printf("ADC9 result = %x\t", (unsigned int)light[7]);
 	}
 
-	printf("\r\n");
+	//printf("\r\n");
 }
 
 void SysTick_Handler(void)
@@ -91,8 +92,8 @@ void SysTick_Handler(void)
 	//status = adc_get_status(ADC);
 	//printf("ADC Status(%x)\r\n", status);
 	//if(adc_get_status(ADC) & (1 << ADC_CHANNEL_0)) {
-	//adc_start(ADC);
-	//	printf("Start ADC\r\n");
+	adc_start(ADC);
+	//printf("Start ADC\r\n");
 	//}
 }
 

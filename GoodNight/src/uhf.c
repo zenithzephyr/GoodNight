@@ -78,7 +78,7 @@ void uhf_test()
 	uint32_t tire_id = 0, frame_id = 0;
 	uint16_t pressure = 0;
 	uint16_t accelZ = 0, accelX = 0;
-	uint8_t voltage = 0, temperature = 0, status = 0;
+	uint16_t voltage = 0, temperature = 0, status = 0;
 	uint16_t sequence = 0;
 	int8_t rssi = 0;
 
@@ -139,7 +139,7 @@ void uhf_test()
 		GUI_Text(125, x+150, str_buf ,White, Black);
 		}
 		if(temperature != last_temperature) {
-		sprintf(str_buf, "%dF     ", temperature);
+		sprintf(str_buf, "%d#F     ", temperature);
 		GUI_Text(125, x+175, str_buf ,White, Black);
 		}
 		if(frame_id != last_frame_id) {

@@ -14,6 +14,8 @@ uint8_t wifi_token[MAX_WIFI_BUF_LEN];
 uint8_t wifi_ssid[64];
 uint8_t is_receiving;
 
+extern uint32_t light[8];
+
 void wifi_init(void)
 {
   uint8_t atstart[13] = {0xA5, 0x01, 0xF2, 0x00, 0x00, 0x0C, 0x00, 0x0C, 0x00, 0x61, 0x2F, 0x52, 0xEF}; //at start command
@@ -170,7 +172,11 @@ void wifi_parse_token()
           sprintf(wifi_cmd_buf, "%cS1%04d%s%cE\r\n",1,data_len, data,1);
           wifi_send_data(wifi_cmd_buf, strlen(wifi_cmd_buf));
         } else if(strncmp(ptr, "LDAT", 4) == 0) { //Light
-          //TODO
+          sprintf(data, "LDAT|%04d|%04d|%04d|%04d|%04d|%04d|%04d|%04d|"
+		  , light[0]*3300/4096,light[1]*3300/4096,light[2]*3300/4096,light[3]*3300/4096,light[4]*3300/4096,light[5]*3300/4096,light[6]*3300/4096,light[7]*3300/4096);
+		  data_len = strlen(data);
+		  sprintf(wifi_cmd_buf, "%cS1%04d%s%cE\r\n",1,data_len, data,1);
+		  wifi_send_data(wifi_cmd_buf, strlen(wifi_cmd_buf));
         } else if(strncmp(ptr, "CDAT", 4) == 0) { //Cargo
           sprintf(data, "CDAT|%d|", gpio_pin_is_high(UWAVE_ECHO_GPIO));
           data_len = strlen(data);
