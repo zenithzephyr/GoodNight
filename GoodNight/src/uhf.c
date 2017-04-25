@@ -14,11 +14,12 @@ struct saved_data_t {
 		uint32_t truck_id;
 		uint32_t tire_id;
 		uint16_t pressure;
-		uint8_t voltage;
-		uint8_t temperature;
+		uint16_t voltage;
+		uint16_t temperature;
 };
 
 struct saved_data_t saved_list[MAX_SAVE_COUNT];
+
 
 static void UHF_IRQ_Handler(const uint32_t id, const uint32_t index)
 {
@@ -85,7 +86,7 @@ void uhf_test()
 	static uint32_t last_tire_id = 0, last_frame_id = 0;
 	static uint16_t last_pressure = 0;
 	static uint16_t last_accelZ = 0, last_accelX = 0;
-	static uint8_t last_voltage = 0, last_temperature = 0, last_status = 0;
+	static uint16_t last_voltage = 0, last_temperature = 0, last_status = 0;
 	static uint16_t last_sequence = 0;
 	static int8_t last_rssi = 0;
 
@@ -108,9 +109,9 @@ void uhf_test()
 			status = buf[13];
 			rssi = -120+si4432_rssiRead()/2;
 
-			pressure = ((pressure + 35.3636) * 2.75) * 0.145; //PSI
-			temperature = ((temperature - 55) * 1.8) + 32; //F
-			voltage = voltage + 122; //10mv
+			pressure = ((pressure + 35.3636) * 275) * 0.145; //PSI
+			temperature = ((temperature - 55) * 180) + 3200; //F
+			voltage = (voltage + 122); //10mv
 
 			printf(" TireID[0x%x] Pressure[%d] AccelZ[%d] AccelX[%d] Voltage[%d] Temperature[%d] FrameID[0x%x] RSSI[%d]\r\n",
 		tire_id, pressure, accelZ, accelX, voltage, temperature, frame_id, rssi);
@@ -123,7 +124,7 @@ void uhf_test()
 			GUI_Text(125, x+50, str_buf ,White, Black);
 		}
 		if(pressure != last_pressure) {
-		sprintf(str_buf, "%dPSI  ", pressure);
+		sprintf(str_buf, "%dPSI  ", pressure/100);
 		GUI_Text(125, x+75, str_buf ,White, Black);
 		}
 		if(accelZ != last_accelZ) {
@@ -139,7 +140,7 @@ void uhf_test()
 		GUI_Text(125, x+150, str_buf ,White, Black);
 		}
 		if(temperature != last_temperature) {
-		sprintf(str_buf, "%d#F     ", temperature);
+		sprintf(str_buf, "%d#F     ", temperature/100);
 		GUI_Text(125, x+175, str_buf ,White, Black);
 		}
 		if(frame_id != last_frame_id) {
@@ -218,6 +219,8 @@ void uhf_save_data(uint32_t truck_id, uint32_t tire_id, uint16_t pressure, uint1
 	} else {
 		for(i=0;i<MAX_SAVE_COUNT;i++) {
 			if(saved_list[i].truck_id == 0 && saved_list[i].tire_id == 0) {
+				saved_list[i].truck_id = truck_id;
+				saved_list[i].tire_id = tire_id;
 				saved_list[i].pressure = pressure;
 				saved_list[i].voltage = voltage;
 				saved_list[i].temperature = temp;

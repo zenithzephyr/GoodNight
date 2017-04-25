@@ -146,7 +146,7 @@ void wifi_parse_token()
           dat_ptr = strtok(NULL, "|");
           strcpy(tire_id, dat_ptr);
 
-          uhf_load_data(atoi(truck_id), atoi(tire_id), &press, &volt, &temp);
+          uhf_load_data(strtoul(truck_id, NULL, 16), strtoul(tire_id, NULL, 16), &press, &volt, &temp);
 
           sprintf(data, "TDAT|%s|%s|%04d|%04d|%04d|", truck_id, tire_id, press, volt, temp);
           data_len = strlen(data);
@@ -165,8 +165,8 @@ void wifi_parse_token()
           dat_ptr = strtok(NULL, "|");
           strcpy(tire_id, dat_ptr);
 
-          uhf_load_data(atoi(truck_id), atoi(tire_id), &press, &volt, &temp);
-
+		  uhf_load_data(strtoul(truck_id, NULL, 16), strtoul(tire_id, NULL, 16), &press, &volt, &temp);
+		  
           sprintf(data, "WDAT|%s|%s|%04d|%04d|", truck_id, tire_id, volt, temp);
           data_len = strlen(data);
           sprintf(wifi_cmd_buf, "%cS1%04d%s%cE\r\n",1,data_len, data,1);
