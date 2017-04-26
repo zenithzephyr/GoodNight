@@ -116,7 +116,7 @@ void uhf_test()
 			printf(" TireID[0x%x] Pressure[%d] AccelZ[%d] AccelX[%d] Voltage[%d] Temperature[%d] FrameID[0x%x] RSSI[%d]\r\n",
 		tire_id, pressure, accelZ, accelX, voltage, temperature, frame_id, rssi);
 
-		uhf_save_data(tire_id, frame_id, pressure, voltage, temperature);
+		uhf_save_data(frame_id, tire_id, pressure, voltage, temperature);
 
 		//test
 		if(tire_id != last_tire_id) {
